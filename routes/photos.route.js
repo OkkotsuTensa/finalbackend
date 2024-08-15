@@ -1,8 +1,8 @@
 import express, { response } from "express";
 import { v4 as uuidv4 } from "uuid";
 import { Photos } from "../entities/photos.entity.js";
-// import { authIsAdmin } from "../middleware/isadmin.middleware.js";
-// import { auth } from "../middleware/auth.middleware.js";
+import { authIsAdmin } from "../middlewares/isadmin.middleware.js";
+import { auth } from "../middlewares/auth.middleware.js";
 import {
   getAllPhotosCtr,
   getPhotobyIdCtr,
@@ -15,7 +15,7 @@ const router = express.Router();
 
 
 
-router.get("/", getAllPhotosCtr);
+router.get("/", auth , getAllPhotosCtr);
 
 router.get("/:id", getPhotobyIdCtr);
 
