@@ -17,5 +17,6 @@ app.get("/", function (request, response) {
 
 app.use("/photos", photosRouter);
 app.use("/user", usersRouter);
+// app.use("/myphotos" ,myphotosRouter) ; 
 
 app.listen(PORT, () => console.log(`The server started in: ${PORT} ✨✨`));
