@@ -11,9 +11,11 @@ const authIsAdmin = async (request, response, next) => {
     // jwt.verify(token, process.env.SECRET_KEY);
     const results = await Session.get({ token: token }).go();
     const role = await Users.get({ userName: results.data.userName }).go();
-    console.log(results, role);
+    // console.log(results, role);
+    // console.log(role)
 
     if (role.data.roleId === ADMIN) {
+      // console.log("Yes he is admin ")
       next();
     } else {
       throw new Error("Unauthorized");

@@ -9,20 +9,27 @@ import {
   deletePhotoCtr,
   createPhotoCtr,
   updatePhotoCtr,
+  getPhotosByUsernameCtr ,
 } from "../controllers/photos.controller.js";
 
 const router = express.Router();
 
 
-
+//Both User and admin can perform
 router.get("/", auth , getAllPhotosCtr);
+router.get("/:id", auth ,  getPhotobyIdCtr);
 
-router.get("/:id", getPhotobyIdCtr);
+//Only admin can perform
+router.delete("/:id" , auth , authIsAdmin,  deletePhotoCtr);
+router.post("/", auth , authIsAdmin, createPhotoCtr);
+router.put("/:id", auth , authIsAdmin,  updatePhotoCtr);
 
-router.delete("/:id" , deletePhotoCtr);
 
-router.post("/", createPhotoCtr);
+//UserPerforming Tasks on his data .
+router.get('/user/:username', auth, getPhotosByUsernameCtr);
+router.post('/user/:username', auth, createPhotoCtr); 
+router.put('/user/:username/:id', auth, updatePhotoCtr); 
+router.delete('/user/:username/:id', auth, deletePhotoCtr);
 
-router.put("/:id", updatePhotoCtr);
 
 export default router;

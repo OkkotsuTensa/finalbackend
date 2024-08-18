@@ -6,7 +6,7 @@ const Photos = new Entity(
   {
     model: {
       entity: "Photos",
-      version: "1",
+      version: "2",
       service: "PhotoService",
     },
     attributes: {
@@ -22,7 +22,7 @@ const Photos = new Entity(
       createdAt: {
         type: "string",
       },
-      userId: {
+      userName: {
         type: "string",
       },
       type: {
@@ -40,6 +40,7 @@ const Photos = new Entity(
           facets: [],
         },
       },
+      
     },
     },
   { client, table: "Photos" }

@@ -1,8 +1,9 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { v4 } from "uuid";
-import { createUser, getUserByuserName  , createSession} from "../services/users.services.js";
+import { createUser ,  createSession , getUserByUsername} from "../services/users.services.js";
 import { response } from "express";
+
 
 const generatePassword = async (password) => {
   const NO_OF_ROUNDS = 10;
@@ -20,7 +21,7 @@ async function createUserCtr(req, res) {
     res.status(400).send({ msg: "password is too short" });
     return;
   }
-  const userFromDB = await getUserByuserName(data.userName);
+  const userFromDB = await getUserByUsername(data.userName);
   if (userFromDB.data) {
     res.status(400).send({ msg: "user already exists" });
     return;
@@ -41,10 +42,11 @@ async function createUserCtr(req, res) {
   }
 }
 
+
 async function logicUserCtr(req, res) {
   const data = req.body;
   const userName = data.userName ; 
-  const userFromDB = await getUserByuserName(data.userName);
+  const userFromDB = await getUserByUsername(data.userName);
   if (!userFromDB.data) {
     res.status(404).send({ msg: "Invalid Credentials" });
     return;
@@ -70,4 +72,4 @@ async function logicUserCtr(req, res) {
   }
 }
 
-export { createUserCtr, logicUserCtr ,  };
+export { createUserCtr, logicUserCtr   };
