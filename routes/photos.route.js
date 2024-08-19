@@ -16,8 +16,8 @@ const router = express.Router();
 
 
 //Both User and admin can perform
-router.get("/", auth , getAllPhotosCtr);
-router.get("/:id", auth ,  getPhotobyIdCtr);
+router.get("/",  getAllPhotosCtr);
+router.get("/:id", getPhotobyIdCtr);
 
 //Only admin can perform
 router.delete("/:id" , auth , authIsAdmin,  deletePhotoCtr);

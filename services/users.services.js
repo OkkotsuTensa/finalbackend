@@ -7,7 +7,7 @@ async function createUser(user) {
 
 async function getUserByUsername(username) {
   try {
-    return await Users.get({ userName: username }).go();
+    return await Users.get({ userName: username  }).go();
   } catch (error) {
     console.error("Error retrieving user by username:", error);
     throw new Error("Failed to retrieve user");
