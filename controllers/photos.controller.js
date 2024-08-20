@@ -8,6 +8,7 @@ import {
   createPhoto,
   getPhotosByUsername
 } from "../services/photos.services.js";
+import { Session } from "../entities/session.entity.js";
 
 
 async function getPhotosByUsernameCtr(req, res) {
@@ -51,11 +52,15 @@ async function getPhotobyIdCtr(request, response) {
 }
 // Delete a specific photo for a user
 async function deletePhotoCtr(request, response) {
-  const { username, id } = request.params; // Get username and photo ID from the URL parameters
+  const {id } = request.params; // Get username and photo ID from the URL parameters
 
   try {
-    const photo = await getPhotoById(id); // Retrieve the photo by ID
-    if (photo.data && photo.data.userName === username || "admin") { // Check if the photo belongs to the user
+    const photo = await getPhotoById(id);
+    const token = request.header("x-auth-token"); // Retrieve the photo by ID
+    const session  = await Session.get({token : token}).go() ; 
+    const username = session.data.userName ;
+
+    if (photo.data && photo.data.userName === username) { // Check if the photo belongs to the user
       await deletePhotoById(id); // Delete the photo
       response.send({ msg: "Photo deleted successfully" });
     } else {
