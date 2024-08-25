@@ -67,7 +67,7 @@ async function logicUserCtr(req, res) {
       const username = userFromDB.data.userName
       await createSession(sessionData);
 
-      res.status(200).send({ msg: "Login Successful", token , roleId , username});
+      res.status(200).send({ msg: "Login Successful", token , roleId , username });
     } else {
       res.status(400).send({ msg: "Invalid Credentials" });
     }

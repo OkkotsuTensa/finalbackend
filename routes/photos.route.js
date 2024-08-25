@@ -15,21 +15,23 @@ import {
 const router = express.Router();
 
 
-//Both User and admin can perform
-router.get("/",  getAllPhotosCtr);
-router.get("/:id", getPhotobyIdCtr);
+
 
 //Only admin can perform
-router.delete("/:id" , auth , authIsAdmin,  deletePhotoCtr);
-router.post("/", auth , authIsAdmin, createPhotoCtr);
-router.put("/:id", auth , authIsAdmin,  updatePhotoCtr);
+// router.delete("/:id" , auth , authIsAdmin,  deletePhotoCtr);
+// router.post("/", auth , authIsAdmin, createPhotoCtr);
+// router.put("/:id", auth , authIsAdmin,  updatePhotoCtr);
 
 
 //UserPerforming Tasks on his data .
-router.get('/user/:username', auth, getPhotosByUsernameCtr);
-router.post('/user/:username', auth, createPhotoCtr); 
-router.put('/user/:username/:id', auth, updatePhotoCtr); 
-router.delete('/user/:username/:id', auth, deletePhotoCtr);
+router.get('/myphotos', auth, getPhotosByUsernameCtr);
+router.post('/myphotos', auth, createPhotoCtr); 
+router.put('/:id', auth, updatePhotoCtr); 
+router.delete('/:id', auth, deletePhotoCtr);
+
+//Both User and admin can perform
+router.get("/",  getAllPhotosCtr);
+router.get("/:id", getPhotobyIdCtr);
 
 
 export default router;

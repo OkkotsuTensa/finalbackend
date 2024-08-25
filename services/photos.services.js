@@ -13,7 +13,7 @@ async function deletePhotoById(id) {
 }
 
 async function getPhotoById(id) {
-  return await Photos.get({ photoId : id }).go();
+  return await Photos.get({ photoId: id }).go();
 }
 
 async function getAllPhotos() {
@@ -24,32 +24,16 @@ async function createPhoto(addPhoto) {
   await Photos.create(addPhoto).go();
 }
 
-async function getPhotosByUsername(username) {
-  const params = {
-      TableName: "Photos", // Replace with your actual table name
-      FilterExpression: "userName = :username",
-      ExpressionAttributeValues: {
-          ":username": username,
-      },
-  };
+async function getPhotosByUsername(dbusername) {
+
 
   try {
-      const result = await client.scan(params).promise();
-      
-      // Map through the result to extract only the desired fields
-      const filteredPhotos = result.Items.map(photo => ({
-          userName: photo.userName,
-          createdAt: photo.createdAt,
-          photoId: photo.photoId,
-          description: photo.description,
-          url: photo.url,
-          type: photo.type
-      }));
+   const filteredPhotos = await Photos.scan.where(({ userName }, { eq }) => eq(userName, dbusername)).go();
 
-      return filteredPhotos; // Returns an array of objects with the specified fields
+    return filteredPhotos.data;
   } catch (error) {
-      console.error("Error scanning DynamoDB:", error);
-      throw new Error("Failed to retrieve photos");
+    console.error("Error scanning DynamoDB:", error);
+    throw new Error("Failed to retrieve photos");
   }
 }
 
@@ -59,5 +43,5 @@ export {
   UpdatePhotoById,
   deletePhotoById,
   createPhoto,
-  getPhotosByUsername ,
+  getPhotosByUsername,
 };

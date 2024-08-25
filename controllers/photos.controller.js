@@ -9,18 +9,22 @@ import {
   getPhotosByUsername
 } from "../services/photos.services.js";
 import { Session } from "../entities/session.entity.js";
+import { Users } from "../entities/users.entity.js";
 
+const ADMIN = '0'
 
-async function getPhotosByUsernameCtr(req, res) {
-  const { username } = req.params; // Extract username from request parameters
-  console.log(username)
+async function getPhotosByUsernameCtr(request, res) {
+  const token = request.header("x-auth-token"); // Retrieve the photo by ID
+  const session = await Session.get({ token: token }).go();
+  const username = session.data.userName;
+  console.log("❤️❤️❤️", username)
   try {
-      const photos = await getPhotosByUsername(username);
-      console.log(photos)
-      res.status(200).send(photos); // Send the photos data as response
+    const photos = await getPhotosByUsername(username);
+    console.log(photos)
+    res.status(200).send(photos); // Send the photos data as response
   } catch (err) {
-      console.error(err);
-      res.status(500).send({ msg: "Failed to retrieve photos" });
+    console.error(err);
+    res.status(500).send({ msg: "Failed to retrieve photos" });
   }
 }
 
@@ -52,15 +56,18 @@ async function getPhotobyIdCtr(request, response) {
 }
 // Delete a specific photo for a user
 async function deletePhotoCtr(request, response) {
-  const {id } = request.params; // Get username and photo ID from the URL parameters
+  const { id } = request.params; // Get username and photo ID from the URL parameters
 
   try {
     const photo = await getPhotoById(id);
     const token = request.header("x-auth-token"); // Retrieve the photo by ID
-    const session  = await Session.get({token : token}).go() ; 
-    const username = session.data.userName ;
+    const session = await Session.get({ token: token }).go();
+    const username = session.data.userName;
+    const user = await Users.get({ userName: username }).go();
+    const roleid = user.data.roleId;
+    console.log(roleid)
 
-    if (photo.data && photo.data.userName === username) { // Check if the photo belongs to the user
+    if (photo.data && (photo.data.userName === username || roleid == ADMIN)) { // Check if the photo belongs to the user
       await deletePhotoById(id); // Delete the photo
       response.send({ msg: "Photo deleted successfully" });
     } else {
@@ -73,16 +80,25 @@ async function deletePhotoCtr(request, response) {
 }
 // Create a new photo for a specific user
 async function createPhotoCtr(req, res) {
-  const { username } = req.params; // Get username from the URL parameters
+  // const { username } = req.params; // Get username from the URL parameters
   const data = req.body;
-  console.log(username , data)
+  console.log(data)
+
 
   try {
+    const createdAt = new Date().toISOString();
+    const token = req.header("x-auth-token"); // Retrieve the photo by ID
+    const session = await Session.get({ token: token }).go();
+    const username = session.data.userName;
+
     const addPhoto = {
       ...data,
       photoId: v4(),
-      userName: username || "admin", // Set the userName to the specified username
+      userName: username,
+      createdAt: createdAt
     };
+
+    console.log("❤️❤️", data, addPhoto)
 
     await createPhoto(addPhoto);
     res.status(201).send(addPhoto);
@@ -95,15 +111,21 @@ async function createPhotoCtr(req, res) {
 
 // Update a specific photo for a user
 async function updatePhotoCtr(request, response) {
-  const { username, id } = request.params; // Get username and photo ID from the URL parameters
-  
+  const { id } = request.params; // Get username and photo ID from the URL parameters
+
   const updateData = request.body;
-  console.log(username , id , updateData) 
+  // console.log(username , id , updateData) 
 
   try {
     const photo = await getPhotoById(id); // Retrieve the photo by ID
-    console.log(photo)
-    if (photo.data && photo.data.userName === username || "admin") { // Check if the photo belongs to the user
+    const token = request.header("x-auth-token"); // Retrieve the photo by ID
+    const session = await Session.get({ token: token }).go();
+    const username = session.data.userName;
+    const user = await Users.get({ userName: username }).go();
+    const roleid = user.data.roleId;
+
+
+    if (photo.data && (photo.data.userName === username || roleid == ADMIN)) { // Check if the photo belongs to the user
       const updatedPhoto = await UpdatePhotoById(photo, updateData);
       console.log(updateData)
       response.send(updatedPhoto.data);
@@ -121,5 +143,5 @@ export {
   createPhotoCtr,
   updatePhotoCtr,
   getPhotobyIdCtr,
-  getPhotosByUsernameCtr ,
+  getPhotosByUsernameCtr,
 };

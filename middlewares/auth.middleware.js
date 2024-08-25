@@ -8,6 +8,7 @@ const auth = async (request, response, next) => {
     jwt.verify(token, process.env.SECRET_KEY);
 
     const session = await Session.get({token: token}).go()
+    // request.username = session.data.userName ;
     // session.data?.userName == param
     next();
   } catch (err) {
